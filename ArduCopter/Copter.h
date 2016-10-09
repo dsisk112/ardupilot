@@ -94,6 +94,7 @@
 #include <AP_RPM/AP_RPM.h>
 #include <AC_InputManager/AC_InputManager.h>        // Pilot input handling library
 #include <AC_InputManager/AC_InputManager_Heli.h>   // Heli specific pilot input handling library
+#include <AP_CollisionAvoidance/AP_CollisionAvoidance.h> // Collision Avoidance library
 
 // Configuration
 #include "defines.h"
@@ -178,6 +179,8 @@ private:
     RangeFinder sonar {serial_manager};
     bool sonar_enabled; // enable user switch for sonar
 #endif
+    // Define collision avoidance
+    CollisionAvoidance ca {serial_manager};
 
     AP_RPM rpm_sensor;
 
@@ -485,8 +488,8 @@ private:
     AP_Rally rally;
 #endif
 
-    // RSSI 
-    AP_RSSI rssi;      
+    // RSSI
+    AP_RSSI rssi;
 
     // Crop Sprayer
 #if SPRAYER == ENABLED
@@ -1019,6 +1022,12 @@ private:
     void init_capabilities(void);
     void dataflash_periodic(void);
     void accel_cal_update(void);
+    bool collisionavoid_init(bool ignore_checks);
+    void collisionavoid_run();
+    void adjustForward(int16_t distance);
+    void adjustBackward(int16_t distance);
+    void adjustLeft(int16_t distance);
+    void adjustRight(int16_t distance);
 
 public:
     void mavlink_delay_cb();

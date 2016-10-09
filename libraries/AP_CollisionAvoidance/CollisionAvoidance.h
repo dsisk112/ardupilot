@@ -14,8 +14,8 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RANGEFINDER_H__
-#define __RANGEFINDER_H__
+#ifndef __COLLISIONAVOIDANCE_H__
+#define __COLLISIONAVOIDANCE_H__
 
 #include <AP_Common/AP_Common.h>
 #include <AP_HAL/AP_HAL.h>
@@ -24,54 +24,54 @@
 #include <AP_SerialManager/AP_SerialManager.h>
 
 // Maximum number of range finder instances available on this platform
-#define RANGEFINDER_MAX_INSTANCES 5
-#define RANGEFINDER_GROUND_CLEARANCE_CM_DEFAULT 10
-#define RANGEFINDER_PREARM_ALT_MAX_CM           200
-#define RANGEFINDER_PREARM_REQUIRED_CHANGE_CM   50
+#define COLLISIONAVOIDANCE_MAX_INSTANCES 5
+#define COLLISIONAVOIDANCE_GROUND_CLEARANCE_CM_DEFAULT 10
+#define COLLISIONAVOIDANCE_PREARM_ALT_MAX_CM           200
+#define COLLISIONAVOIDANCE_PREARM_REQUIRED_CHANGE_CM   50
 
-class AP_RangeFinder_Backend;
+class AP_CollisionAvoidance_Backend;
 
-class RangeFinder
+class CollisionAvoidance
 {
 public:
-    friend class AP_RangeFinder_Backend;
+    friend class AP_CollisionAvoidance_Backend;
 
-    RangeFinder(AP_SerialManager &_serial_manager);
+    CollisionAvoidance(AP_SerialManager &_serial_manager);
 
-    // RangeFinder driver types
-    enum RangeFinder_Type {
-        RangeFinder_TYPE_NONE   = 0,
-        RangeFinder_TYPE_ANALOG = 1,
-        RangeFinder_TYPE_MBI2C  = 2,
-        RangeFinder_TYPE_PLI2C  = 3,
-        RangeFinder_TYPE_PX4    = 4,
-        RangeFinder_TYPE_PX4_PWM= 5,
-        RangeFinder_TYPE_BBB_PRU= 6,
-        RangeFinder_TYPE_LWI2C  = 7,
-        RangeFinder_TYPE_LWSER  = 8
+    // CollisionAvoidance driver types
+    enum CollisionAvoidance_Type {
+        CollisionAvoidance_TYPE_NONE   = 0,
+        CollisionAvoidance_TYPE_ANALOG = 1,
+        CollisionAvoidance_TYPE_MBI2C  = 2,
+        CollisionAvoidance_TYPE_PLI2C  = 3,
+        CollisionAvoidance_TYPE_PX4    = 4,
+        CollisionAvoidance_TYPE_PX4_PWM= 5,
+        CollisionAvoidance_TYPE_BBB_PRU= 6,
+        CollisionAvoidance_TYPE_LWI2C  = 7,
+        CollisionAvoidance_TYPE_LWSER  = 8
     };
 
-    enum RangeFinder_Function {
+    enum CollisionAvoidance_Function {
         FUNCTION_LINEAR    = 0,
         FUNCTION_INVERTED  = 1,
         FUNCTION_HYPERBOLA = 2
     };
 
-    enum RangeFinder_Status {
-        RangeFinder_NotConnected = 0,
-        RangeFinder_NoData,
-        RangeFinder_OutOfRangeLow,
-        RangeFinder_OutOfRangeHigh,
-        RangeFinder_Good
+    enum CollisionAvoidance_Status {
+        CollisionAvoidance_NotConnected = 0,
+        CollisionAvoidance_NoData,
+        CollisionAvoidance_OutOfRangeLow,
+        CollisionAvoidance_OutOfRangeHigh,
+        CollisionAvoidance_Good
     };
 
-    // The RangeFinder_State structure is filled in by the backend driver
-    struct RangeFinder_State {
-        uint8_t                instance;    // the instance number of this RangeFinder
+    // The CollisionAvoidance_State structure is filled in by the backend driver
+    struct CollisionAvoidance_State {
+        uint8_t                instance;    // the instance number of this CollisionAvoidance
         uint16_t               distance_cm; // distance: in cm
         uint16_t               voltage_mv;  // voltage in millivolts,
                                             // if applicable, otherwise 0
-        enum RangeFinder_Status status;     // sensor status
+        enum CollisionAvoidance_Status status;     // sensor status
         uint8_t                range_valid_count;   // number of consecutive valid readings (maxes out at 10)
         bool                   pre_arm_check;   // true if sensor has passed pre-arm checks
         uint16_t               pre_arm_distance_min;    // min distance captured during pre-arm checks
@@ -79,18 +79,18 @@ public:
     };
 
     // parameters for each instance
-    AP_Int8  _type[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _pin[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _ratiometric[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _stop_pin[RANGEFINDER_MAX_INSTANCES];
-    AP_Int16 _settle_time_ms[RANGEFINDER_MAX_INSTANCES];
-    AP_Float _scaling[RANGEFINDER_MAX_INSTANCES];
-    AP_Float _offset[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _function[RANGEFINDER_MAX_INSTANCES];
-    AP_Int16 _min_distance_cm[RANGEFINDER_MAX_INSTANCES];
-    AP_Int16 _max_distance_cm[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _ground_clearance_cm[RANGEFINDER_MAX_INSTANCES];
-    AP_Int8  _address[RANGEFINDER_MAX_INSTANCES];
+    AP_Int8  _type[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _pin[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _ratiometric[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _stop_pin[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int16 _settle_time_ms[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Float _scaling[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Float _offset[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _function[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int16 _min_distance_cm[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int16 _max_distance_cm[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _ground_clearance_cm[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_Int8  _address[COLLISIONAVOIDANCE_MAX_INSTANCES];
     AP_Int16 _powersave_range;
 
     static const struct AP_Param::GroupInfo var_info[];
@@ -107,17 +107,17 @@ public:
     // 10Hz from main loop
     void update(void);
 
-#define _RangeFinder_STATE(instance) state[instance]
+#define _CollisionAvoidance_STATE(instance) state[instance]
 
     uint16_t distance_cm(uint8_t instance) const {
-        return (instance<num_instances? _RangeFinder_STATE(instance).distance_cm : 0);
+        return (instance<num_instances? _CollisionAvoidance_STATE(instance).distance_cm : 0);
     }
     uint16_t distance_cm() const {
         return distance_cm(primary_instance);
     }
 
     uint16_t voltage_mv(uint8_t instance) const {
-        return _RangeFinder_STATE(instance).voltage_mv;
+        return _CollisionAvoidance_STATE(instance).voltage_mv;
     }
     uint16_t voltage_mv() const {
         return voltage_mv(primary_instance);
@@ -144,8 +144,8 @@ public:
     }
 
     // query status
-    RangeFinder_Status status(uint8_t instance) const;
-    RangeFinder_Status status(void) const {
+    CollisionAvoidance_Status status(uint8_t instance) const;
+    CollisionAvoidance_Status status(void) const {
         return status(primary_instance);
     }
 
@@ -160,7 +160,7 @@ public:
         return range_valid_count(primary_instance);
     }
     uint8_t range_valid_count(uint8_t instance) const {
-        return _RangeFinder_STATE(instance).range_valid_count;
+        return _CollisionAvoidance_STATE(instance).range_valid_count;
     }
 
     /*
@@ -179,8 +179,8 @@ public:
     bool pre_arm_check() const;
 
 private:
-    RangeFinder_State state[RANGEFINDER_MAX_INSTANCES];
-    AP_RangeFinder_Backend *drivers[RANGEFINDER_MAX_INSTANCES];
+    CollisionAvoidance_State state[COLLISIONAVOIDANCE_MAX_INSTANCES];
+    AP_CollisionAvoidance_Backend *drivers[COLLISIONAVOIDANCE_MAX_INSTANCES];
     uint8_t primary_instance:3;
     uint8_t num_instances:3;
     float estimated_terrain_height;
@@ -191,4 +191,4 @@ private:
 
     void update_pre_arm_check(uint8_t instance);
 };
-#endif // __RANGEFINDER_H__
+#endif // __COLLISIONAVOIDANCE_H__

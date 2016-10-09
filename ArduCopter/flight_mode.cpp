@@ -95,6 +95,10 @@ bool Copter::set_mode(uint8_t mode)
             success = brake_init(ignore_checks);
             break;
 
+        case COLISION_AVOID:
+            success = collisionavoid_init(ignore_checks);
+            break;
+
         default:
             success = false;
             break;
@@ -206,6 +210,10 @@ void Copter::update_flight_mode()
         case BRAKE:
             brake_run();
             break;
+
+        case COLISION_AVOID:
+            collisionavoid_run();
+            break;
     }
 }
 
@@ -271,6 +279,7 @@ bool Copter::mode_requires_GPS(uint8_t mode) {
         case DRIFT:
         case POSHOLD:
         case BRAKE:
+        case COLISION_AVOID:
             return true;
         default:
             return false;
@@ -369,6 +378,9 @@ void Copter::print_flight_mode(AP_HAL::BetterStream *port, uint8_t mode)
         break;
     case BRAKE:
         port->print("BRAKE");
+        break;
+    case COLISION_AVOID:
+        port->print("COLLISION AVOID");
         break;
     default:
         port->printf("Mode(%u)", (unsigned)mode);
